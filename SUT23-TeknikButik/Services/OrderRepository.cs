@@ -33,19 +33,32 @@ namespace SUT23_TeknikButik.Services
             return null;
         }
 
-        public Task<IEnumerable<Order>> GetAll()
+        public async Task<IEnumerable<Order>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _appDbContext.Orders.Include(o => o.Customer).ToListAsync();
         }
 
-        public Task<Order> GetSingel(int id)
+        public async Task<Order> GetSingel(int id)
         {
-            throw new NotImplementedException();
+            return await _appDbContext.Orders.Include(o => o.Customer).
+                FirstOrDefaultAsync(o => o.OrderID == id);
         }
 
-        public Task<Order> Update(Order entity)
+        public async Task<Order> Update(Order entity)
         {
-            throw new NotImplementedException();
+            var result= await _appDbContext.Orders.
+               FirstOrDefaultAsync(o => o.OrderID == entity.OrderID);
+
+            if(result != null)
+            {
+                result.OrderPlaced = entity.OrderPlaced;
+                result.Customer.Address = entity.Customer.Address;
+                result.Customer.Email = entity.Customer.Email;
+
+                await _appDbContext.SaveChangesAsync();
+                return result;
+            }
+            return null;
         }
     }
 }

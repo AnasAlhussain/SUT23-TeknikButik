@@ -21,9 +21,16 @@ namespace SUT23_TeknikButik
 
             builder.Services.AddScoped<ITeknikButik<Product>, ProductRepository>();
             builder.Services.AddScoped<ITeknikButik<Order>, OrderRepository>();
+            builder.Services.AddScoped<ICustomer, CustomerRepository>();
 
-            //EF Till SQL
-            builder.Services.AddDbContext<AppDbContext>(options =>
+            // En lösning till serialize
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.
+                Serialization.ReferenceHandler.IgnoreCycles;
+            });
+                //EF Till SQL
+                builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Connection")));
 
             var app = builder.Build();
