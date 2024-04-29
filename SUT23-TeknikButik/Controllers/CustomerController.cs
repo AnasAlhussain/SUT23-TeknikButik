@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using SUT23_TeknikButik.Services;
 
@@ -28,6 +29,50 @@ namespace SUT23_TeknikButik.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                    "Error to get Data from Database.......");
             }
+        }
+
+
+        [HttpGet("{id:int}")]
+        public async Task <IActionResult> GetCustomer(int id)
+        {
+            try
+            {
+                var result = await _customer.GetSingelCustomer(id);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound($"Customer with ID {id} Not Founded");
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
+
+            
+        }
+
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(string name)
+        {
+            try
+            {
+                var result = await _customer.Search(name);
+                if (result.Any())
+                {
+                    return Ok(result);
+                }
+                return NotFound();
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
     }
 }
